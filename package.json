@@ -1,6 +1,6 @@
 {
   "name": "desktop-mascot-mcp",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "MCP Server for desktop mascot with VRM 3D character, TTS voice synthesis, and emotion expressions",
   "type": "module",
   "main": "dist/index.js",
