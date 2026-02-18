@@ -55,7 +55,7 @@ AI が返答すると、キャラクターが**音声・リップシンク・表
 ### 1. リポジトリをクローン
 
 ```bash
-git clone https://github.com/your-username/desktop-mascot-mcp.git
+git clone https://github.com/rennosuke-haresu/desktop-mascot-mcp.git
 cd desktop-mascot-mcp
 npm install
 ```
