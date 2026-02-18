@@ -1,5 +1,9 @@
 # Desktop Mascot MCP
 
+<p align="center">
+  <img src="docs/images/screenshot.png" alt="Desktop Mascot MCP screenshot" width="320">
+</p>
+
 MCP（Model Context Protocol）対応の AI ツールと連携して、3D キャラクターがデスクトップに常駐するマスコットアプリです。
 
 AI が返答すると、キャラクターが**音声・リップシンク・表情・ジェスチャー**でリアクションします。
