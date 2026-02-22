@@ -268,14 +268,20 @@ node fbx2vrma-converter.js -i input.fbx -o output.vrma
 Mixamo からダウンロードする際は:
 - Format: **FBX**
 - Skin: **Without Skin**（スケルトンのみ）
+- Frames per second: **30**
+- Keyframe Reduction: **None**
 
 *方法 2b: Blender で変換*
 
 [Blender](https://www.blender.org/) + [VRM Add-on for Blender](https://vrm-addon-for-blender.info/) を使う方法です。
 
 1. Blender に VRM Add-on をインストール・有効化（`編集` → `プリファレンス` → `アドオン`）
-2. `ファイル` → `インポート` → `FBX (.fbx)` で読み込む
-3. `ファイル` → `エクスポート` → `VRM Animation (.vrma)` で書き出す
+2. VRM モデルをインポート（`ファイル` → `インポート` → `VRM (.vrm)`）
+3. Mixamo の FBX アニメーションをインポート（`ファイル` → `インポート` → `FBX (.fbx)`）
+4. アニメーションを VRM のボーン構造にリターゲット
+5. VRMA 形式でエクスポート（`ファイル` → `エクスポート` → `VRM Animation (.vrma)`）
+
+詳細は [VRM 公式ドキュメント](https://vrm.dev/) を参照してください。
 
 **方法 3: 自分でアニメーションを作成**
 
@@ -629,14 +635,20 @@ node fbx2vrma-converter.js -i input.fbx -o output.vrma
 When downloading from Mixamo:
 - Format: **FBX**
 - Skin: **Without Skin** (skeleton only)
+- Frames per second: **30**
+- Keyframe Reduction: **None**
 
 *Option 2b: Convert via Blender*
 
 Use [Blender](https://www.blender.org/) + [VRM Add-on for Blender](https://vrm-addon-for-blender.info/).
 
 1. Install and enable the VRM Add-on (`Edit` → `Preferences` → `Add-ons`)
-2. Import via `File` → `Import` → `FBX (.fbx)`
-3. Export via `File` → `Export` → `VRM Animation (.vrma)`
+2. Import your VRM model (`File` → `Import` → `VRM (.vrm)`)
+3. Import the Mixamo FBX animation (`File` → `Import` → `FBX (.fbx)`)
+4. Retarget the animation to the VRM bone structure
+5. Export as VRMA (`File` → `Export` → `VRM Animation (.vrma)`)
+
+See the [VRM official documentation](https://vrm.dev/) for more details.
 
 **Option 3: Create your own animations**
 

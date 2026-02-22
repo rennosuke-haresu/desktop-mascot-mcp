@@ -143,6 +143,7 @@ vite.config.ts.timestamp-*
 # VRM models and animations (user-provided binary files)
 assets/models/*.vrm
 assets/animations/*.vrma
+assets/animations/animations.json
 
 # User configuration (keep config.example.json in git)
 config.json
