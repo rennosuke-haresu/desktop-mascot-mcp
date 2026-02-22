@@ -295,6 +295,11 @@ Mixamo からダウンロードする際は:
 > **アニメーションなしの場合**: アニメーションファイルを用意しない場合、または `idle` アニメーションが登録されていない場合、キャラクターは腕を少し下ろした自然なポーズで表示されます。
 
 VRMA ファイルを `assets/animations/` に置いたら `animations.json` に登録します。
+`animations.example.json` をコピーして使用できます。
+
+```bash
+cp assets/animations/animations.example.json assets/animations/animations.json
+```
 
 ```json
 {
@@ -662,6 +667,11 @@ See the [VRM official documentation](https://vrm.dev/) for more details.
 > **No animations?** If no animation files are provided, or if no `idle` animation is registered, the character will stand in a natural resting pose.
 
 Place VRMA files in `assets/animations/` and register them in `animations.json`.
+You can copy `animations.example.json` as a starting point.
+
+```bash
+cp assets/animations/animations.example.json assets/animations/animations.json
+```
 
 ```json
 {
