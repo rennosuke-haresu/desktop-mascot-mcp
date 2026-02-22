@@ -98,7 +98,7 @@ function startHttpServer() {
   httpServer = http.createServer((req: any, res: any) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
@@ -107,9 +107,24 @@ function startHttpServer() {
       return;
     }
 
+    if (req.method === 'GET' && req.url === '/health') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ status: 'ok' }));
+      return;
+    }
+
     if (req.method === 'POST') {
+      const MAX_PAYLOAD_SIZE = 1024 * 1024; // 1MB
       let body = '';
+      let size = 0;
       req.on('data', (chunk: any) => {
+        size += chunk.length;
+        if (size > MAX_PAYLOAD_SIZE) {
+          req.destroy();
+          res.writeHead(413, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Payload too large' }));
+          return;
+        }
         body += chunk.toString();
       });
 

@@ -245,7 +245,7 @@ export class AivisSpeechService {
    * 音声を再生（リップシンク付き）
    */
   private async playAudioWithLipSync(audioBuffer: Buffer, lipSyncTimings: LipSyncTiming[]): Promise<void> {
-    const tempFile = join(tmpdir(), 'yuichat_temp_audio.wav');
+    const tempFile = join(tmpdir(), 'desktop-mascot_temp_audio.wav');
 
     try {
       // 一時ファイルに保存
@@ -290,12 +290,12 @@ export class AivisSpeechService {
     }
 
     // 音声再生開始までの遅延を考慮（PowerShell初期化時間）
-    const playbackStartOffset = 150; // ミリ秒
+    const PLAYBACK_START_OFFSET_MS = 150;
 
     // 各母音のタイミングでsetVowelを呼び出すPromiseの配列を作成
     const lipSyncPromises = timings.map(timing => {
       return new Promise<void>(resolve => {
-        const delayMs = (timing.startTime * 1000) + playbackStartOffset;
+        const delayMs = (timing.startTime * 1000) + PLAYBACK_START_OFFSET_MS;
         setTimeout(async () => {
           try {
             await this.vrmControl!.setVowel(timing.vowel);
