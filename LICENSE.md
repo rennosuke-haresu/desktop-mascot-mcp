@@ -1,6 +1,6 @@
 # MIT License
 
-Copyright (c) 2025 YuiChat MCP Contributors
+Copyright (c) 2025 rennosuke-haresu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,9 +26,6 @@ SOFTWARE.
 
 This license applies to the **source code** of this project only.
 
-The following assets are subject to their own licenses:
-
-- **VRM Models** (`assets/models/`): See [assets/models/LICENSE.md](assets/models/LICENSE.md)
-- **VRMA Animations** (`assets/animations/`): See [assets/animations/LICENSE.md](assets/animations/LICENSE.md)
-
-Users must comply with the respective licenses when using these assets.
+VRM models and VRMA animation files are **not included** in this repository.
+Any assets you provide yourself are subject to their respective licenses.
+Please comply with the terms of each asset's license when using them.
