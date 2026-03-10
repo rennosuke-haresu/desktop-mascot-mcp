@@ -40,8 +40,13 @@ AI が返答すると、キャラクターが**音声・リップシンク・表
 
 ## 📋 必要なもの
 
+> **⚠️ 動作環境: 現在 Windows のみ対応しています。**
+> 音声再生に PowerShell を使用しているため、macOS・Linux では音声が再生されません。
+> macOS・Linux 対応は今後の課題です。
+
 | 必要なもの | 入手先 |
 |---|---|
+| OS | **Windows 10 / 11** |
 | Node.js 18 以上 | [nodejs.org](https://nodejs.org/) |
 | Git | [git-scm.com](https://git-scm.com/) |
 | MCP 対応 AI ツール | [Claude Desktop](https://claude.ai/download) など |
@@ -425,8 +430,13 @@ You → AI tool → speak command → Character responds with voice & animation
 
 ## 📋 Requirements
 
+> **⚠️ Platform: Windows only (currently).**
+> Audio playback uses PowerShell, so voice synthesis does not work on macOS or Linux.
+> Cross-platform support is planned for a future release.
+
 | Requirement | Where to get |
 |---|---|
+| OS | **Windows 10 / 11** |
 | Node.js 18+ | [nodejs.org](https://nodejs.org/) |
 | Git | [git-scm.com](https://git-scm.com/) |
 | MCP-compatible AI tool | [Claude Desktop](https://claude.ai/download), etc. |
