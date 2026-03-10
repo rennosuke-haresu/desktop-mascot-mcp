@@ -150,6 +150,7 @@ config.json
 
 # Claude Code local settings
 .claude
+CLAUDE.md
 
 # Serena local settings
 .serena
