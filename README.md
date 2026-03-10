@@ -74,6 +74,8 @@ AI が返答すると、キャラクターが**音声・リップシンク・表
 
 ## 🚀 セットアップ
 
+> **初めての方へ**: より簡潔な手順は [はじめに（Getting Started）](docs/getting-started.md) を参照してください。
+
 ### 1. リポジトリをクローン
 
 ```bash
@@ -472,6 +474,8 @@ Free model examples:
 ---
 
 ## 🚀 Setup
+
+> **New here?** For a streamlined walkthrough, see [Getting Started](docs/getting-started.md).
 
 ### 1. Clone the repository
 
