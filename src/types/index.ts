@@ -1,5 +1,5 @@
 /**
- * AivisSpeech API型定義
+ * TTS (Text-to-Speech) API型定義
  */
 
 /**
@@ -41,10 +41,10 @@ export interface Mora {
 }
 
 /**
- * AivisSpeech設定
+ * TTS設定
  */
-export interface AivisSpeechConfig {
-  /** AivisSpeech APIのベースURL */
+export interface TtsConfig {
+  /** TTS APIのベースURL */
   baseUrl: string;
   /** 話者ID (例: 1431611904 = Anneli) */
   speakerId: number;
@@ -60,9 +60,9 @@ export interface AivisSpeechConfig {
  * エラーの種類
  */
 export enum ErrorType {
-  /** ネットワークエラー（AivisSpeechに到達できない） */
+  /** ネットワークエラー（TTSエンジンに到達できない） */
   NETWORK = 'NETWORK',
-  /** APIエラー（AivisSpeechがエラーを返した） */
+  /** APIエラー（TTSエンジンがエラーを返した） */
   API = 'API',
   /** タイムアウト */
   TIMEOUT = 'TIMEOUT',
@@ -75,7 +75,7 @@ export enum ErrorType {
 /**
  * カスタムエラーの基底型
  */
-export interface AivisSpeechErrorData {
+export interface TtsErrorData {
   type: ErrorType;
   message: string;
   originalError?: unknown;

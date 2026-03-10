@@ -1,23 +1,23 @@
-import { ErrorType, AivisSpeechErrorData } from '../types/index.js';
+import { ErrorType, TtsErrorData } from '../types/index.js';
 
 /**
- * AivisSpeech専用エラークラス
+ * TTS専用エラークラス
  */
-export class AivisSpeechError extends Error {
+export class TtsError extends Error {
   public readonly type: ErrorType;
   public readonly retryable: boolean;
   public readonly originalError?: unknown;
 
-  constructor(data: AivisSpeechErrorData) {
+  constructor(data: TtsErrorData) {
     super(data.message);
-    this.name = 'AivisSpeechError';
+    this.name = 'TtsError';
     this.type = data.type;
     this.retryable = data.retryable;
     this.originalError = data.originalError;
 
     // スタックトレースを適切に設定
     if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, AivisSpeechError);
+      Error.captureStackTrace(this, TtsError);
     }
   }
 
@@ -39,8 +39,8 @@ export class AivisSpeechError extends Error {
 /**
  * ネットワークエラーを作成
  */
-export function createNetworkError(message: string, originalError?: unknown): AivisSpeechError {
-  return new AivisSpeechError({
+export function createNetworkError(message: string, originalError?: unknown): TtsError {
+  return new TtsError({
     type: ErrorType.NETWORK,
     message: `ネットワークエラー: ${message}`,
     originalError,
@@ -51,9 +51,9 @@ export function createNetworkError(message: string, originalError?: unknown): Ai
 /**
  * APIエラーを作成
  */
-export function createApiError(status: number, message: string): AivisSpeechError {
+export function createApiError(status: number, message: string): TtsError {
   const retryable = status >= 500 && status < 600; // 5xxエラーは再試行可能
-  return new AivisSpeechError({
+  return new TtsError({
     type: ErrorType.API,
     message: `APIエラー (${status}): ${message}`,
     retryable,
@@ -63,8 +63,8 @@ export function createApiError(status: number, message: string): AivisSpeechErro
 /**
  * タイムアウトエラーを作成
  */
-export function createTimeoutError(timeoutMs: number): AivisSpeechError {
-  return new AivisSpeechError({
+export function createTimeoutError(timeoutMs: number): TtsError {
+  return new TtsError({
     type: ErrorType.TIMEOUT,
     message: `タイムアウト: ${timeoutMs}ms以内に応答がありませんでした`,
     retryable: true,
@@ -74,8 +74,8 @@ export function createTimeoutError(timeoutMs: number): AivisSpeechError {
 /**
  * 再生エラーを作成
  */
-export function createPlaybackError(message: string, originalError?: unknown): AivisSpeechError {
-  return new AivisSpeechError({
+export function createPlaybackError(message: string, originalError?: unknown): TtsError {
+  return new TtsError({
     type: ErrorType.PLAYBACK,
     message: `再生エラー: ${message}`,
     originalError,
@@ -86,9 +86,9 @@ export function createPlaybackError(message: string, originalError?: unknown): A
 /**
  * 不明なエラーを作成
  */
-export function createUnknownError(originalError: unknown): AivisSpeechError {
+export function createUnknownError(originalError: unknown): TtsError {
   const message = originalError instanceof Error ? originalError.message : String(originalError);
-  return new AivisSpeechError({
+  return new TtsError({
     type: ErrorType.UNKNOWN,
     message: `不明なエラー: ${message}`,
     originalError,
@@ -97,15 +97,15 @@ export function createUnknownError(originalError: unknown): AivisSpeechError {
 }
 
 /**
- * エラーから適切なAivisSpeechErrorを生成
+ * エラーから適切なTtsErrorを生成
  */
-export function wrapError(error: unknown): AivisSpeechError {
-  if (error instanceof AivisSpeechError) {
+export function wrapError(error: unknown): TtsError {
+  if (error instanceof TtsError) {
     return error;
   }
 
   if (error instanceof TypeError && error.message.includes('fetch')) {
-    return createNetworkError('AivisSpeech APIに接続できません', error);
+    return createNetworkError('TTS APIに接続できません', error);
   }
 
   return createUnknownError(error);

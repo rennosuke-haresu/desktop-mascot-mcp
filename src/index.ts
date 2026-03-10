@@ -6,7 +6,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
-import { AivisSpeechService } from './services/AivisSpeechService.js';
+import { TtsService } from './services/TtsService.js';
 import { VRMControlService } from './services/VRMControlService.js';
 import { createSpeakTool } from './tools/speak.js';
 
@@ -22,7 +22,7 @@ async function main() {
   const vrmControlService = new VRMControlService(3939);
 
   // 音声合成サービスを初期化（リップシンク対応）
-  const aivisSpeechService = new AivisSpeechService({
+  const ttsService = new TtsService({
     baseUrl,
     speakerId,
     timeout: 30000, // 30秒
@@ -44,7 +44,7 @@ async function main() {
   );
 
   // speak toolを作成
-  const speakTool = createSpeakTool(aivisSpeechService, vrmControlService);
+  const speakTool = createSpeakTool(ttsService, vrmControlService);
 
   // tools/listハンドラ: 利用可能なツール一覧を返す
   server.setRequestHandler(ListToolsRequestSchema, async () => {

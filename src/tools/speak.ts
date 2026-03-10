@@ -1,10 +1,10 @@
-import { AivisSpeechService } from '../services/AivisSpeechService.js';
+import { TtsService } from '../services/TtsService.js';
 import { VRMControlService } from '../services/VRMControlService.js';
 
 /**
  * speak tool定義
  */
-export function createSpeakTool(service: AivisSpeechService, vrmControl?: VRMControlService) {
+export function createSpeakTool(service: TtsService, vrmControl?: VRMControlService) {
   return {
     name: 'speak',
     description: 'テキストを音声で読み上げます。VRMキャラクターの表情とアニメーションを制御します。',

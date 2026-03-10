@@ -3,18 +3,40 @@ import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { promisify } from 'util';
-import { AudioQuery, AivisSpeechConfig, Mora } from '../types/index.js';
+import { AudioQuery, TtsConfig, Mora } from '../types/index.js';
 import {
   createNetworkError,
   createApiError,
   createTimeoutError,
   createPlaybackError,
   wrapError,
-  AivisSpeechError,
+  TtsError,
 } from '../utils/errors.js';
 import { VRMControlService } from './VRMControlService.js';
 
 const execAsync = promisify(exec);
+
+/**
+ * OS に応じた音声再生コマンドを返す
+ */
+function buildPlayCommand(filePath: string): string {
+  switch (process.platform) {
+    case 'win32':
+      return `powershell -c "(New-Object Media.SoundPlayer '${filePath.replace(/\\/g, '\\\\')}').PlaySync()"`;
+    case 'darwin':
+      return `afplay "${filePath}"`;
+    default: // linux
+      return `aplay "${filePath}"`;
+  }
+}
+
+/**
+ * OS に応じた再生開始オフセット（ミリ秒）を返す
+ * PowerShell は起動が重いため Windows のみ大きめの値を設定
+ */
+function getPlaybackStartOffset(): number {
+  return process.platform === 'win32' ? 150 : 50;
+}
 
 /**
  * リップシンクタイミング情報
@@ -25,14 +47,15 @@ interface LipSyncTiming {
 }
 
 /**
- * AivisSpeech音声合成サービス
+ * TTS（音声合成）サービス
+ * VOICEVOX互換API（AivisSpeech / VOICEVOX / COEIROINK 等）を使用して音声を合成・再生する
  */
-export class AivisSpeechService {
-  private readonly config: Required<AivisSpeechConfig>;
+export class TtsService {
+  private readonly config: Required<TtsConfig>;
   private isProcessing = false; // 二重実行防止フラグ
   private vrmControl?: VRMControlService;
 
-  constructor(config: AivisSpeechConfig, vrmControl?: VRMControlService) {
+  constructor(config: TtsConfig, vrmControl?: VRMControlService) {
     this.config = {
       baseUrl: config.baseUrl,
       speakerId: config.speakerId,
@@ -64,7 +87,7 @@ export class AivisSpeechService {
    * リトライ機能付き音声再生
    */
   private async speakWithRetry(text: string): Promise<void> {
-    let lastError: AivisSpeechError | null = null;
+    let lastError: TtsError | null = null;
 
     for (let attempt = 1; attempt <= this.config.maxRetries; attempt++) {
       try {
@@ -81,7 +104,7 @@ export class AivisSpeechService {
         // 最後の試行でない場合は待機してリトライ
         if (attempt < this.config.maxRetries) {
           const delay = this.config.retryDelay * attempt; // 指数バックオフ
-          console.error(`[AivisSpeech] ${lastError.toString()} - ${delay}ms後に再試行 (${attempt}/${this.config.maxRetries})`);
+          console.error(`[TtsService] ${lastError.toString()} - ${delay}ms後に再試行 (${attempt}/${this.config.maxRetries})`);
           await this.sleep(delay);
         }
       }
@@ -198,7 +221,7 @@ export class AivisSpeechService {
       if (error instanceof Error && error.name === 'AbortError') {
         throw createTimeoutError(this.config.timeout);
       }
-      if (error instanceof AivisSpeechError) {
+      if (error instanceof TtsError) {
         throw error;
       }
       throw createNetworkError('音声クエリの作成中にエラーが発生しました', error);
@@ -234,7 +257,7 @@ export class AivisSpeechService {
       if (error instanceof Error && error.name === 'AbortError') {
         throw createTimeoutError(this.config.timeout);
       }
-      if (error instanceof AivisSpeechError) {
+      if (error instanceof TtsError) {
         throw error;
       }
       throw createNetworkError('音声合成中にエラーが発生しました', error);
@@ -251,12 +274,9 @@ export class AivisSpeechService {
       // 一時ファイルに保存
       writeFileSync(tempFile, audioBuffer);
 
-      // パスをエスケープ
-      const escapedPath = tempFile.replace(/\\/g, '\\\\');
-
       // 音声再生を開始（非同期）
       const playbackPromise = execAsync(
-        `powershell -c "(New-Object Media.SoundPlayer '${escapedPath}').PlaySync()"`,
+        buildPlayCommand(tempFile),
         { encoding: 'utf-8' }
       ).catch(error => {
         const errorMsg = error instanceof Error ? error.message : String(error);
@@ -289,8 +309,8 @@ export class AivisSpeechService {
       return;
     }
 
-    // 音声再生開始までの遅延を考慮（PowerShell初期化時間）
-    const PLAYBACK_START_OFFSET_MS = 150;
+    // 音声再生開始までの遅延を考慮（コマンド起動時間はOSにより異なる）
+    const PLAYBACK_START_OFFSET_MS = getPlaybackStartOffset();
 
     // 各母音のタイミングでsetVowelを呼び出すPromiseの配列を作成
     const lipSyncPromises = timings.map(timing => {

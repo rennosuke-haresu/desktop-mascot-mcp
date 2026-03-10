@@ -40,18 +40,27 @@ AI が返答すると、キャラクターが**音声・リップシンク・表
 
 ## 📋 必要なもの
 
-> **⚠️ 動作環境: 現在 Windows のみ対応しています。**
-> 音声再生に PowerShell を使用しているため、macOS・Linux では音声が再生されません。
-> macOS・Linux 対応は今後の課題です。
+| OS | 音声再生 | 動作確認 |
+|---|---|---|
+| Windows 10 / 11 | ✅ PowerShell | ✅ 確認済み |
+| macOS | ✅ afplay | ⚠️ 未確認 |
+| Linux | ✅ aplay | ⚠️ 未確認 |
 
 | 必要なもの | 入手先 |
 |---|---|
-| OS | **Windows 10 / 11** |
 | Node.js 18 以上 | [nodejs.org](https://nodejs.org/) |
 | Git | [git-scm.com](https://git-scm.com/) |
 | MCP 対応 AI ツール | [Claude Desktop](https://claude.ai/download) など |
-| VOICEVOX 互換 音声合成エンジン | [VOICEVOX](https://voicevox.hiroshiba.jp/) / [AivisSpeech](https://aivis-project.com/) など |
+| VOICEVOX 互換 音声合成エンジン | 下記参照 |
 | VRM モデルファイル（.vrm） | 下記参照 |
+
+### 音声合成エンジンの OS 別対応
+
+| エンジン | Windows | macOS | Linux |
+|---|---|---|---|
+| [AivisSpeech](https://aivis-project.com/) | ✅ | ❌ | ❌ |
+| [VOICEVOX](https://voicevox.hiroshiba.jp/) | ✅ | ✅ | ✅ |
+| [COEIROINK](https://coeiroink.com/) | ✅ | ❓ | ❓ |
 
 ### VRM モデルの入手
 
@@ -430,18 +439,27 @@ You → AI tool → speak command → Character responds with voice & animation
 
 ## 📋 Requirements
 
-> **⚠️ Platform: Windows only (currently).**
-> Audio playback uses PowerShell, so voice synthesis does not work on macOS or Linux.
-> Cross-platform support is planned for a future release.
+| OS | Audio playback | Tested |
+|---|---|---|
+| Windows 10 / 11 | ✅ PowerShell | ✅ Confirmed |
+| macOS | ✅ afplay | ⚠️ Untested |
+| Linux | ✅ aplay | ⚠️ Untested |
 
 | Requirement | Where to get |
 |---|---|
-| OS | **Windows 10 / 11** |
 | Node.js 18+ | [nodejs.org](https://nodejs.org/) |
 | Git | [git-scm.com](https://git-scm.com/) |
 | MCP-compatible AI tool | [Claude Desktop](https://claude.ai/download), etc. |
-| VOICEVOX-compatible TTS engine | [VOICEVOX](https://voicevox.hiroshiba.jp/) / [AivisSpeech](https://aivis-project.com/), etc. |
+| VOICEVOX-compatible TTS engine | See below |
 | VRM model file (.vrm) | See below |
+
+### TTS engine compatibility by OS
+
+| Engine | Windows | macOS | Linux |
+|---|---|---|---|
+| [AivisSpeech](https://aivis-project.com/) | ✅ | ❌ | ❌ |
+| [VOICEVOX](https://voicevox.hiroshiba.jp/) | ✅ | ✅ | ✅ |
+| [COEIROINK](https://coeiroink.com/) | ✅ | ❓ | ❓ |
 
 ### Getting a VRM model
 
