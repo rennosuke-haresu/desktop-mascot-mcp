@@ -85,6 +85,9 @@ export class VRMRenderer {
       console.error('[desktop-mascot-mcp] Failed to load animations (continuing without):', error);
     }
 
+    // アニメーション読み込みの成否にかかわらず初期状態を適用
+    this.animation.applyInitialState();
+
     console.log('[desktop-mascot-mcp] VRM model loaded');
   }
 

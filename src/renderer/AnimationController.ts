@@ -64,14 +64,19 @@ export class AnimationController {
     }
 
     console.log(`[desktop-mascot-mcp] Loaded ${this.animations.size} animations`);
+  }
 
+  /**
+   * idle アニメーションがあれば再生、なければデフォルトポーズを適用する。
+   * アニメーション読み込み後に必ず呼ぶ。
+   */
+  applyInitialState(): void {
     if (this.animations.has('idle')) {
       this.play('idle', false);
     } else {
       console.warn('[desktop-mascot-mcp] No idle animation found - applying default pose');
       this.setDefaultPose();
     }
-
     this.scheduleIdleVariation();
   }
 

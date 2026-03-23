@@ -17,7 +17,7 @@ interface Config {
   vrm: {
     modelPath: string;
   };
-  animations: {
+  animations?: {
     configPath: string;
   };
   camera: {
@@ -75,9 +75,11 @@ async function init() {
     config = await loadConfig();
     console.log('[desktop-mascot-mcp] Configuration loaded:', config);
 
+    const animationsConfigPath = config.animations?.configPath ?? './assets/animations/animations.json';
+
     vrmRenderer = new VRMRenderer(
       canvas,
-      config.animations.configPath,
+      animationsConfigPath,
       config.window.storagePrefix,
       config.camera
     );
