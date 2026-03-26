@@ -151,8 +151,8 @@ export class AnimationController {
     if (!this.vrm.humanoid) return;
     const leftUpperArm = this.vrm.humanoid.getNormalizedBoneNode('leftUpperArm');
     const rightUpperArm = this.vrm.humanoid.getNormalizedBoneNode('rightUpperArm');
-    if (leftUpperArm) leftUpperArm.rotation.z = -Math.PI / 6;
-    if (rightUpperArm) rightUpperArm.rotation.z = Math.PI / 6;
+    if (leftUpperArm) leftUpperArm.rotation.z = Math.PI / 3;
+    if (rightUpperArm) rightUpperArm.rotation.z = -Math.PI / 3;
   }
 
   private scheduleIdleVariation(): void {
