@@ -71,7 +71,7 @@ export class TtsService {
    */
   public async speak(text: string): Promise<void> {
     if (this.isProcessing) {
-      throw new Error('音声再生が既に実行中です。前の再生が完了するまでお待ちください。');
+      throw new Error('Already speaking. Please wait for the current playback to finish.');
     }
 
     this.isProcessing = true;
@@ -104,7 +104,7 @@ export class TtsService {
         // 最後の試行でない場合は待機してリトライ
         if (attempt < this.config.maxRetries) {
           const delay = this.config.retryDelay * attempt; // 指数バックオフ
-          console.error(`[TtsService] ${lastError.toString()} - ${delay}ms後に再試行 (${attempt}/${this.config.maxRetries})`);
+          console.error(`[TtsService] ${lastError.toString()} - retrying in ${delay}ms (${attempt}/${this.config.maxRetries})`);
           await this.sleep(delay);
         }
       }
@@ -213,7 +213,7 @@ export class TtsService {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw createApiError(response.status, `音声クエリの作成に失敗しました`);
+        throw createApiError(response.status, `Failed to create audio query`);
       }
 
       return await response.json() as AudioQuery;
@@ -224,7 +224,7 @@ export class TtsService {
       if (error instanceof TtsError) {
         throw error;
       }
-      throw createNetworkError('音声クエリの作成中にエラーが発生しました', error);
+      throw createNetworkError('Error during audio query creation', error);
     }
   }
 
@@ -248,7 +248,7 @@ export class TtsService {
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        throw createApiError(response.status, `音声合成に失敗しました`);
+        throw createApiError(response.status, `Failed to synthesize audio`);
       }
 
       const arrayBuffer = await response.arrayBuffer();
@@ -260,7 +260,7 @@ export class TtsService {
       if (error instanceof TtsError) {
         throw error;
       }
-      throw createNetworkError('音声合成中にエラーが発生しました', error);
+      throw createNetworkError('Error during audio synthesis', error);
     }
   }
 
@@ -280,7 +280,7 @@ export class TtsService {
         { encoding: 'utf-8' }
       ).catch(error => {
         const errorMsg = error instanceof Error ? error.message : String(error);
-        const detail = `音声ファイル: ${tempFile}, エラー詳細: ${errorMsg}`;
+        const detail = `file: ${tempFile}, detail: ${errorMsg}`;
         throw createPlaybackError(detail, error);
       });
 
