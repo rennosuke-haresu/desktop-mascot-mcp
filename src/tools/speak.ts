@@ -34,61 +34,45 @@ export function createSpeakTool(service: TtsService, vrmControl?: VRMControlServ
       // 入力検証
       if (!text || text.trim().length === 0) {
         return {
-          content: [
-            {
-              type: 'text',
-              text: 'エラー: 読み上げるテキストが空です。',
-            },
-          ],
+          content: [{ type: 'text', text: 'Error: text is empty.' }],
         };
       }
 
-      // emotion の型チェック（念のため）
       const validEmotions = ['neutral', 'happy', 'sad', 'angry', 'relaxed', 'surprised'];
       const finalEmotion = validEmotions.includes(emotion) ? emotion : 'neutral';
 
+      // character 可用性チェック（ECONNREFUSED は即時失敗するので低コスト）
+      const characterAvailable = vrmControl ? await vrmControl.isVRMWindowRunning() : false;
+
+      // VRM コマンド送信（未起動なら VRMControlService 内で静かに失敗）
+      if (animation && vrmControl) await vrmControl.playAnimation(animation);
+      if (vrmControl) await vrmControl.notifySpeak(text, finalEmotion);
+
+      // TTS 実行
+      let ttsAvailable = true;
       try {
-        // アニメーション再生（指定されている場合のみ）
-        if (animation && vrmControl) {
-          await vrmControl.playAnimation(animation);
-        }
-
-        // VRMウィンドウに音声再生を通知
-        if (vrmControl) {
-          await vrmControl.notifySpeak(text, finalEmotion);
-        }
-
-        // 音声再生を実行
         await service.speak(text);
-
-        // 発話完了後、neutral以外の表情だった場合はneutralに戻す
-        if (vrmControl && finalEmotion !== 'neutral') {
-          await vrmControl.setEmotion('neutral');
-        }
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: '音声再生が完了しました',
-            },
-          ],
-        };
       } catch (error) {
-        // エラーハンドリング
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        console.error('[speak tool] エラー:', errorMessage);
-
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `エラー: 音声再生に失敗しました。\n理由: ${errorMessage}`,
-            },
-          ],
-          isError: true,
-        };
+        console.error('[speak tool] TTS error:', error instanceof Error ? error.message : error);
+        ttsAvailable = false;
       }
+
+      // 表情リセット
+      if (characterAvailable && finalEmotion !== 'neutral' && vrmControl) {
+        await vrmControl.setEmotion('neutral');
+      }
+
+      // レスポンス組み立て
+      const notes: string[] = [];
+      if (!ttsAvailable) notes.push('tts unavailable');
+      if (!characterAvailable) notes.push('character unavailable');
+
+      return {
+        content: [{
+          type: 'text',
+          text: notes.length > 0 ? `OK (${notes.join(', ')})` : 'OK',
+        }],
+      };
     },
   };
 }
