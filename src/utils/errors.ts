@@ -32,7 +32,7 @@ export class TtsError extends Error {
    * エラー情報を文字列化
    */
   public toString(): string {
-    return `[${this.type}] ${this.message}${this.retryable ? ' (再試行可能)' : ''}`;
+    return `[${this.type}] ${this.message}${this.retryable ? ' (retryable)' : ''}`;
   }
 }
 
@@ -42,7 +42,7 @@ export class TtsError extends Error {
 export function createNetworkError(message: string, originalError?: unknown): TtsError {
   return new TtsError({
     type: ErrorType.NETWORK,
-    message: `ネットワークエラー: ${message}`,
+    message: `Network error: ${message}`,
     originalError,
     retryable: true,
   });
@@ -55,7 +55,7 @@ export function createApiError(status: number, message: string): TtsError {
   const retryable = status >= 500 && status < 600; // 5xxエラーは再試行可能
   return new TtsError({
     type: ErrorType.API,
-    message: `APIエラー (${status}): ${message}`,
+    message: `API error (${status}): ${message}`,
     retryable,
   });
 }
@@ -66,7 +66,7 @@ export function createApiError(status: number, message: string): TtsError {
 export function createTimeoutError(timeoutMs: number): TtsError {
   return new TtsError({
     type: ErrorType.TIMEOUT,
-    message: `タイムアウト: ${timeoutMs}ms以内に応答がありませんでした`,
+    message: `Timeout: no response within ${timeoutMs}ms`,
     retryable: true,
   });
 }
@@ -77,7 +77,7 @@ export function createTimeoutError(timeoutMs: number): TtsError {
 export function createPlaybackError(message: string, originalError?: unknown): TtsError {
   return new TtsError({
     type: ErrorType.PLAYBACK,
-    message: `再生エラー: ${message}`,
+    message: `Playback error: ${message}`,
     originalError,
     retryable: false,
   });
@@ -90,7 +90,7 @@ export function createUnknownError(originalError: unknown): TtsError {
   const message = originalError instanceof Error ? originalError.message : String(originalError);
   return new TtsError({
     type: ErrorType.UNKNOWN,
-    message: `不明なエラー: ${message}`,
+    message: `Unknown error: ${message}`,
     originalError,
     retryable: false,
   });
@@ -105,7 +105,7 @@ export function wrapError(error: unknown): TtsError {
   }
 
   if (error instanceof TypeError && error.message.includes('fetch')) {
-    return createNetworkError('TTS APIに接続できません', error);
+    return createNetworkError('cannot connect to TTS API', error);
   }
 
   return createUnknownError(error);
