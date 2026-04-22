@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-04-23
+
+### Added
+- Graceful degradation when TTS engine or VRM character is unavailable
+
+### Changed
+- All log and error messages translated to English (TtsService, errors.ts)
+
+### Fixed
+- Default pose arm direction corrected; angle set to 45 degrees
+- Default pose now applied when animations fail to load or config is absent
+
+---
+
 ## [0.2.0] - 2026-03-10
 
 ### Added
