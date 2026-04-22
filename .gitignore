@@ -148,6 +148,9 @@ assets/animations/animations.json
 # User configuration (keep config.example.json in git)
 config.json
 
+# Git worktrees
+.worktrees/
+
 # Claude Code local settings
 .claude
 CLAUDE.md
