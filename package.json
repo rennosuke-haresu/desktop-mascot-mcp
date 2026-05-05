@@ -22,7 +22,7 @@
     "start:electron": "electron dist/main/index.cjs",
     "dev": "tsc && node dist/index.js",
     "dev:electron": "npm run build:electron && electron dist/main/index.cjs",
-    "dist:win": "npm run build:mcp && npm run build:electron && electron-builder --win",
+    "dist:win": "npm run build:mcp && npm run build:electron && electron-builder --win && npm run zip:win",
     "zip:win": "node scripts/zip-win.mjs",
     "clean": "rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -151,6 +151,9 @@ config.json
 # Git worktrees
 .worktrees/
 
+# Build output
+release/
+
 # Claude Code local settings
 .claude
 CLAUDE.md
