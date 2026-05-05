@@ -22,6 +22,8 @@
     "start:electron": "electron dist/main/index.cjs",
     "dev": "tsc && node dist/index.js",
     "dev:electron": "npm run build:electron && electron dist/main/index.cjs",
+    "dist:win": "npm run build:mcp && npm run build:electron && electron-builder --win --dir && npm run zip:win",
+    "zip:win": "node scripts/zip-win.mjs",
     "clean": "rm -rf dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -36,6 +38,46 @@
   ],
   "author": "",
   "license": "MIT",
+  "build": {
+    "appId": "com.rennosuke.desktop-mascot",
+    "productName": "Desktop Mascot",
+    "asar": false,
+    "extraMetadata": {
+      "main": "dist/main/index.cjs"
+    },
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "zip", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Desktop Mascot"
+    },
+    "files": [
+      "dist/main/**",
+      "dist/renderer/**"
+    ],
+    "extraResources": [
+      {
+        "from": "dist",
+        "to": "mcp",
+        "filter": [
+          "index.js",
+          "services/**",
+          "tools/**",
+          "types/**",
+          "utils/**"
+        ]
+      }
+    ]
+  },
   "engines": {
     "node": ">=18"
   },
@@ -50,6 +92,7 @@
     "@types/three": "^0.182.0",
     "concurrently": "^9.2.1",
     "electron": "^40.4.1",
+    "electron-builder": "^26.8.1",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
