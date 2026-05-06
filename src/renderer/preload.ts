@@ -19,5 +19,3 @@ contextBridge.exposeInMainWorld('vrmAPI', {
     ipcRenderer.send('set-window-bounds', bounds);
   },
 });
-
-console.log('Preload script loaded');

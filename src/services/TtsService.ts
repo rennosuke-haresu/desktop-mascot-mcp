@@ -324,7 +324,7 @@ export class TtsService {
           try {
             await this.vrmControl!.setVowel(timing.vowel);
           } catch (error) {
-            console.warn(`[LipSync] Failed to set vowel ${timing.vowel}:`, error);
+            console.error(`[LipSync] Failed to set vowel ${timing.vowel}:`, error);
           }
           resolve();
         }, delayMs);
@@ -338,7 +338,7 @@ export class TtsService {
     try {
       await this.vrmControl.setVowel(null);
     } catch (error) {
-      console.warn('[LipSync] Failed to close mouth:', error);
+      console.error('[LipSync] Failed to close mouth:', error);
     }
   }
 

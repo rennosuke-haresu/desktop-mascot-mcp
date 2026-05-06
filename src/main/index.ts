@@ -15,6 +15,7 @@ app.on('window-all-closed', () => {
 });
 
 app.whenReady().then(() => {
+  console.error('Desktop Mascot VRM Window started');
   createWindow();
   startHttpServer();
   registerIpcHandlers();
@@ -30,5 +31,3 @@ app.whenReady().then(() => {
 app.on('before-quit', () => {
   closeHttpServer();
 });
-
-console.error('Desktop Mascot VRM Window started');
