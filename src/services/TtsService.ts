@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { exec, execFile } from 'child_process';
 import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
@@ -15,20 +15,6 @@ import {
 import { VRMControlService } from './VRMControlService.js';
 
 const execAsync = promisify(exec);
-
-/**
- * OS に応じた音声再生コマンドを返す
- */
-function buildPlayCommand(filePath: string): string {
-  switch (process.platform) {
-    case 'win32':
-      return `powershell -c "(New-Object Media.SoundPlayer '${filePath.replace(/\\/g, '\\\\')}').PlaySync()"`;
-    case 'darwin':
-      return `afplay "${filePath}"`;
-    default: // linux
-      return `aplay "${filePath}"`;
-  }
-}
 
 /**
  * OS に応じた再生開始オフセット（ミリ秒）を返す
@@ -64,6 +50,27 @@ export class TtsService {
       retryDelay: config.retryDelay ?? 1000, // デフォルト1秒
     };
     this.vrmControl = vrmControl;
+  }
+
+  /**
+   * OS に応じた音声ファイルを再生する（シェルインジェクション回避）
+   */
+  private async playAudio(filePath: string): Promise<void> {
+    if (process.platform === 'win32') {
+      await new Promise<void>((resolve, reject) => {
+        execFile('powershell', [
+          '-NoProfile', '-NonInteractive', '-Command',
+          `(New-Object Media.SoundPlayer '${filePath.replace(/'/g, "''")}').PlaySync()`
+        ], (err) => {
+          if (err) reject(err);
+          else resolve();
+        });
+      });
+    } else if (process.platform === 'darwin') {
+      await execAsync(`afplay "${filePath}"`);
+    } else {
+      await execAsync(`aplay "${filePath}"`);
+    }
   }
 
   /**
@@ -275,10 +282,7 @@ export class TtsService {
       writeFileSync(tempFile, audioBuffer);
 
       // 音声再生を開始（非同期）
-      const playbackPromise = execAsync(
-        buildPlayCommand(tempFile),
-        { encoding: 'utf-8' }
-      ).catch(error => {
+      const playbackPromise = this.playAudio(tempFile).catch(error => {
         const errorMsg = error instanceof Error ? error.message : String(error);
         const detail = `file: ${tempFile}, detail: ${errorMsg}`;
         throw createPlaybackError(detail, error);
