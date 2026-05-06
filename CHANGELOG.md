@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.2] - 2026-05-06
+
+### Fixed
+- HTTP server now sends 413 response before destroying request socket
+- Window mode toggle (`Ctrl+,`) uses `'closed'` event instead of `setTimeout` to eliminate race condition
+- Windows audio playback uses `execFile` with argument array to prevent shell injection
+- VRM HTTP requests now time out after 5 seconds to prevent indefinite hang
+- HTTP endpoints validate input types before forwarding to IPC
+- `AnimationController` cleans up `'finished'` event listeners on dispose
+- Replaced `console.warn` with `console.error` in MCP server process for stdout safety
+- Removed debug log from preload; moved startup message inside `app.whenReady()`
+
+---
+
 ## [0.3.1] - 2026-05-06
 
 ### Added
