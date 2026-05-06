@@ -7,13 +7,18 @@ export interface LipSyncTiming {
 
 export function calculateAudioDuration(audioBuffer: Buffer, query: AudioQuery): number {
   const headerSize = 44;
-  const dataSize = audioBuffer.length - headerSize;
+  const dataSize = Math.max(0, audioBuffer.length - headerSize);
   const sampleRate = query.outputSamplingRate;
   const channels = query.outputStereo ? 2 : 1;
   const bytesPerSample = 2;
   return dataSize / (sampleRate * channels * bytesPerSample);
 }
 
+/**
+ * AudioQueryから母音タイミング情報を抽出
+ * 注: AivisSpeechではvowel_length/consonant_lengthが常に0なため、
+ * 音声の総長さとモーラ数から均等分割で推定します
+ */
 export function extractLipSyncTimings(query: AudioQuery, audioDurationSeconds: number): LipSyncTiming[] {
   const timings: LipSyncTiming[] = [];
   const allMoras: { vowel: string }[] = [];
