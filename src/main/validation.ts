@@ -9,7 +9,11 @@ export function validateEmotion(v: unknown): v is 'neutral' | 'happy' | 'angry' 
 }
 
 export function validateSpeakPayload(data: unknown): data is { text: string; emotion?: string } {
-  return typeof data === 'object' && data !== null && typeof (data as Record<string, unknown>).text === 'string';
+  if (typeof data !== 'object' || data === null) return false;
+  const d = data as Record<string, unknown>;
+  if (typeof d.text !== 'string') return false;
+  if (d.emotion !== undefined && typeof d.emotion !== 'string') return false;
+  return true;
 }
 
 export function validateAnimationPayload(data: unknown): data is { animation: string } {

@@ -39,6 +39,10 @@ describe('validateSpeakPayload', () => {
     expect(validateSpeakPayload({ text: 123 })).toBe(false);
   });
 
+  it('{ text: string, emotion: number } を拒否する', () => {
+    expect(validateSpeakPayload({ text: 'hi', emotion: 123 })).toBe(false);
+  });
+
   it('空オブジェクト {} を拒否する', () => {
     expect(validateSpeakPayload({})).toBe(false);
   });
