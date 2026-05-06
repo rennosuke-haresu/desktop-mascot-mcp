@@ -26,6 +26,8 @@ export class AnimationController {
   private animations: Map<string, AnimationState> = new Map();
   private currentAnimation: string = '';
 
+  private finishedListeners: Array<(e: any) => void> = [];
+
   private idleVariationTimer: number | null = null;
   private idleVariationEnabled: boolean = true;
   private idleVariationDelayMin: number = 10000;
@@ -99,11 +101,13 @@ export class AnimationController {
     action.clampWhenFinished = true;
 
     if (!config.loop && config.returnToIdle) {
-      this.mixer.addEventListener('finished', (e: any) => {
+      const listener = (e: any) => {
         if (e.action === action) {
           this.play('idle', false);
         }
-      });
+      };
+      this.finishedListeners.push(listener);
+      this.mixer.addEventListener('finished', listener);
     }
 
     this.animations.set(config.name, { clip, action, config });
@@ -190,6 +194,11 @@ export class AnimationController {
   }
 
   dispose(): void {
+    for (const listener of this.finishedListeners) {
+      this.mixer.removeEventListener('finished', listener);
+    }
+    this.finishedListeners = [];
+    this.mixer.stopAllAction();
     if (this.idleVariationTimer !== null) {
       clearTimeout(this.idleVariationTimer);
       this.idleVariationTimer = null;
