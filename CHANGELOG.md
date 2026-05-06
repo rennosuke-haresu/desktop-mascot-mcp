@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.1] - 2026-05-06
+
+### Added
+- Windows installer packaging via electron-builder (NSIS + zip)
+- `npm run dist:win` script for one-command Windows release build
+- `scripts/zip-win.mjs` to zip installer for BOOTH distribution
+
+### Fixed
+- `dist/main/package.json` generated at build time to resolve ESM/CommonJS conflict with new modules
+
+### Changed
+- Rewrote `docs/getting-started.md` for BOOTH distribution with beginner-friendly installer guide (JP/EN)
+
+---
+
 ## [0.3.0] - 2026-04-23
 
 ### Added
