@@ -161,3 +161,6 @@ CLAUDE.md
 # Serena local settings
 .serena
 
+# Superpowers design docs (local-only)
+docs/superpowers/
+
