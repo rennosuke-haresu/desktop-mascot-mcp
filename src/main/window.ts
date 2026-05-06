@@ -63,14 +63,15 @@ export function toggleWindowMode(): void {
   const [width, height] = mainWindow.getSize();
 
   isRecreatingWindow = true;
-  mainWindow.close();
 
-  setTimeout(() => {
+  mainWindow.once('closed', () => {
     createWindow();
     if (mainWindow) {
       mainWindow.setPosition(x, y);
       mainWindow.setSize(width, height);
     }
     isRecreatingWindow = false;
-  }, 100);
+  });
+
+  mainWindow.close();
 }
