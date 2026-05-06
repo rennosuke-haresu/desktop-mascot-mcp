@@ -61,11 +61,13 @@
 
 **1. Node.js をダウンロードする**
 
-[nodejs.org](https://nodejs.org/ja/) にアクセスして、「**LTS**」と書かれた緑色のボタンをクリックしてダウンロードします。
+[nodejs.org/ja/download](https://nodejs.org/ja/download) にアクセスします。ページを開くと、お使いの OS（Windows）が自動的に選択されています。
 
-![ここに画像: nodejs.org の LTS ダウンロードボタン](images/STEP02-nodejs-download.png)
+![ここに画像: nodejs.org ダウンロードページ（Windows 自動選択）](images/STEP02-nodejs-download.png)
 
-> 「LTS」は Long-Term Support の略で、安定版という意味です。
+バージョン（`v24.15.0 LTS` など）とアーキテクチャ（`x64`）が表示されているのを確認したら、「**Windows インストーラー (.msi)**」ボタンをクリックしてダウンロードします。
+
+> 「LTS」は Long-Term Support の略で、安定板という意味です。特にこだわりがなければ LTS を選んでください。
 
 **2. インストーラーを実行する**
 
@@ -89,7 +91,7 @@
 node --version
 ```
 
-`v20.x.x` や `v22.x.x` など `v18` 以上の数字が表示されれば成功です。
+`v24.x.x` のような数字が表示されれば成功です（`v18` 以上であれば OK）。
 
 ![ここに画像: node --version の実行結果](images/STEP02-node-version.png)
 
