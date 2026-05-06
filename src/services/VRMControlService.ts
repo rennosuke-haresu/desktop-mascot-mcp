@@ -13,22 +13,31 @@ export class VRMControlService {
    * VRMウィンドウが起動していない場合（ECONNREFUSED）は静かに失敗
    */
   private async makeRequest(endpoint: string, payload: unknown): Promise<void> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
       const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        signal: controller.signal,
       });
 
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (error) {
-      if (error instanceof Error && error.message.includes('ECONNREFUSED')) {
-        console.warn(`VRM window not running - skipping ${endpoint}`);
-      } else {
-        console.error(`Failed to call ${endpoint}:`, error);
+      if (error instanceof Error) {
+        if (error.message.includes('ECONNREFUSED')) {
+          console.error(`VRM window not running - skipping ${endpoint}`);
+        } else if (error.name === 'AbortError') {
+          console.error(`VRM request timed out - skipping ${endpoint}`);
+        } else {
+          console.error(`Failed to call ${endpoint}:`, error);
+        }
       }
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 
