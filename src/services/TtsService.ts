@@ -3,7 +3,7 @@ import { writeFileSync, unlinkSync, existsSync } from 'fs';
 import { join } from 'path';
 import { tmpdir } from 'os';
 import { promisify } from 'util';
-import { AudioQuery, TtsConfig, Mora } from '../types/index.js';
+import { AudioQuery, TtsConfig } from '../types/index.js';
 import {
   createNetworkError,
   createApiError,
@@ -13,6 +13,8 @@ import {
   TtsError,
 } from '../utils/errors.js';
 import { VRMControlService } from './VRMControlService.js';
+import { calculateAudioDuration, extractLipSyncTimings } from '../utils/audio.js';
+import type { LipSyncTiming } from '../utils/audio.js';
 
 const execAsync = promisify(exec);
 
@@ -22,14 +24,6 @@ const execAsync = promisify(exec);
  */
 function getPlaybackStartOffset(): number {
   return process.platform === 'win32' ? 150 : 50;
-}
-
-/**
- * リップシンクタイミング情報
- */
-interface LipSyncTiming {
-  vowel: 'a' | 'i' | 'u' | 'e' | 'o';
-  startTime: number; // 秒単位
 }
 
 /**
@@ -132,74 +126,13 @@ export class TtsService {
     const audioBuffer = await this.synthesizeAudio(query);
 
     // Step 3: 音声の長さを計算（WAVヘッダーから）
-    const audioDuration = this.calculateAudioDuration(audioBuffer, query);
+    const audioDuration = calculateAudioDuration(audioBuffer, query);
 
     // Step 4: リップシンクタイミングを抽出（音声の長さを使用）
-    const lipSyncTimings = this.extractLipSyncTimings(query, audioDuration);
+    const lipSyncTimings = extractLipSyncTimings(query, audioDuration);
 
     // Step 5: 音声を再生（リップシンク付き）
     await this.playAudioWithLipSync(audioBuffer, lipSyncTimings);
-  }
-
-  /**
-   * WAVバッファから音声の長さ（秒）を計算
-   */
-  private calculateAudioDuration(audioBuffer: Buffer, query: AudioQuery): number {
-    // WAVファイルのヘッダーサイズ（標準PCM WAV）
-    const headerSize = 44;
-    const dataSize = audioBuffer.length - headerSize;
-
-    // サンプリングレートとチャンネル数を取得
-    const sampleRate = query.outputSamplingRate;
-    const channels = query.outputStereo ? 2 : 1;
-    const bytesPerSample = 2; // 16-bit PCM
-
-    // 音声の長さ（秒）を計算
-    const duration = dataSize / (sampleRate * channels * bytesPerSample);
-    return duration;
-  }
-
-  /**
-   * AudioQueryから母音タイミング情報を抽出
-   * 注: AivisSpeechではvowel_length/consonant_lengthが常に0なため、
-   * 音声の総長さとモーラ数から均等分割で推定します
-   */
-  private extractLipSyncTimings(query: AudioQuery, audioDurationSeconds: number): LipSyncTiming[] {
-    const timings: LipSyncTiming[] = [];
-
-    // すべてのモーラを収集
-    const allMoras: { vowel: string; text: string }[] = [];
-    for (const phrase of query.accent_phrases) {
-      for (const mora of phrase.moras) {
-        if (mora.vowel && mora.vowel.length > 0) {
-          allMoras.push({ vowel: mora.vowel, text: mora.text });
-        }
-      }
-    }
-
-    const moraCount = allMoras.length;
-    if (moraCount === 0) {
-      return timings;
-    }
-
-    // 音声の長さをモーラ数で均等分割
-    const moraInterval = audioDurationSeconds / moraCount;
-
-    // 各モーラの母音にタイミングを割り当て
-    for (let i = 0; i < allMoras.length; i++) {
-      const mora = allMoras[i];
-      const vowel = mora.vowel.toLowerCase();
-
-      if (vowel === 'a' || vowel === 'i' || vowel === 'u' || vowel === 'e' || vowel === 'o') {
-        const startTime = i * moraInterval;
-        timings.push({
-          vowel: vowel as 'a' | 'i' | 'u' | 'e' | 'o',
-          startTime: startTime,
-        });
-      }
-    }
-
-    return timings;
   }
 
   /**
