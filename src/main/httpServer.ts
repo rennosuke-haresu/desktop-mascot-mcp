@@ -39,15 +39,16 @@ export function startHttpServer(): void {
       req.on('data', (chunk: any) => {
         size += chunk.length;
         if (size > MAX_PAYLOAD_SIZE) {
-          req.destroy();
           res.writeHead(413, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ error: 'Payload too large' }));
+          req.destroy();
           return;
         }
         body += chunk.toString();
       });
 
       req.on('end', () => {
+        if (res.headersSent) return;
         try {
           const data = JSON.parse(body);
 
