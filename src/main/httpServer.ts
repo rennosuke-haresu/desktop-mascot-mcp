@@ -53,18 +53,40 @@ export function startHttpServer(): void {
           const data = JSON.parse(body);
 
           if (req.url === '/vrm/vowel') {
+            const validVowels = ['a', 'i', 'u', 'e', 'o', null];
+            if (!validVowels.includes(data.vowel)) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Invalid vowel value' }));
+              return;
+            }
             handleVowelCommand(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
           } else if (req.url === '/vrm/emotion') {
+            const validEmotions = ['neutral', 'happy', 'angry', 'sad', 'relaxed', 'surprised'];
+            if (typeof data.emotion !== 'string' || !validEmotions.includes(data.emotion)) {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'Invalid emotion value' }));
+              return;
+            }
             handleEmotionCommand(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
           } else if (req.url === '/vrm/speak') {
+            if (typeof data.text !== 'string') {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'text must be a string' }));
+              return;
+            }
             handleSpeakCommand(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
           } else if (req.url === '/vrm/animation') {
+            if (typeof data.animation !== 'string') {
+              res.writeHead(400, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ error: 'animation must be a string' }));
+              return;
+            }
             handleAnimationCommand(data);
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
